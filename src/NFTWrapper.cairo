@@ -6,23 +6,83 @@ use starknet::{ContractAddress, ClassHash};
 // ERC20 token interface
 #[starknet::interface]
 pub trait INFTWarpedToken<TContractState> {
+    // IERC20
     fn mint(ref self: TContractState, recipient: ContractAddress, amount: u256);
     fn burn(ref self: TContractState, account: ContractAddress, amount: u256);
-    fn balance_of(self: @TContractState, owner: ContractAddress) -> felt252;
+    fn total_supply(self: @TContractState) -> u256;
+    fn balance_of(self: @TContractState, account: ContractAddress) -> u256;
+    fn allowance(self: @TContractState, owner: ContractAddress, spender: ContractAddress) -> u256;
+    fn transfer(ref self: TContractState, recipient: ContractAddress, amount: u256) -> bool;
+    fn transfer_from(
+        ref self: TContractState, sender: ContractAddress, recipient: ContractAddress, amount: u256
+    ) -> bool;
+    fn approve(ref self: TContractState, spender: ContractAddress, amount: u256) -> bool;
+
+    // IERC20Metadata
+    fn name(self: @TContractState) -> ByteArray;
+    fn symbol(self: @TContractState) -> ByteArray;
+    fn decimals(self: @TContractState) -> u8;
+
+    // IERC20Camel
+    fn totalSupply(self: @TContractState) -> u256;
+    fn balanceOf(self: @TContractState, account: ContractAddress) -> u256;
+    fn transferFrom(
+        ref self: TContractState, sender: ContractAddress, recipient: ContractAddress, amount: u256
+    ) -> bool;
 }
 
 // ERC721 token interface
 #[starknet::interface]
 pub trait INFTContract<TContractState> {
+    // IERC721
     fn safe_mint(
         ref self: TContractState, recipient: ContractAddress, token_id: u256, data: Span<felt252>
+    );
+    fn balance_of(self: @TContractState, account: ContractAddress) -> u256;
+    fn owner_of(self: @TContractState, token_id: u256) -> ContractAddress;
+    fn safe_transfer_from(
+        ref self: TContractState,
+        from: ContractAddress,
+        to: ContractAddress,
+        token_id: u256,
+        data: Span<felt252>
     );
     fn transfer_from(
         ref self: TContractState, from: ContractAddress, to: ContractAddress, token_id: u256
     );
-    fn owner_of(self: @TContractState, token_id: u256) -> ContractAddress;
+    fn approve(ref self: TContractState, to: ContractAddress, token_id: u256);
+    fn set_approval_for_all(ref self: TContractState, operator: ContractAddress, approved: bool);
+    fn get_approved(self: @TContractState, token_id: u256) -> ContractAddress;
+    fn is_approved_for_all(
+        self: @TContractState, owner: ContractAddress, operator: ContractAddress
+    ) -> bool;
+
+    // IERC721Metadata
     fn name(self: @TContractState) -> ByteArray;
     fn symbol(self: @TContractState) -> ByteArray;
+    fn token_uri(self: @TContractState, token_id: u256) -> ByteArray;
+
+    // IERC721CamelOnly
+    fn balanceOf(self: @TContractState, account: ContractAddress) -> u256;
+    fn ownerOf(self: @TContractState, tokenId: u256) -> ContractAddress;
+    fn safeTransferFrom(
+        ref self: TContractState, 
+        from: ContractAddress,
+        to: ContractAddress,
+        tokenId: u256,
+        data: Span<felt252>
+    );
+    fn transferFrom(
+        ref self: TContractState, from: ContractAddress, to: ContractAddress, tokenId: u256
+    );
+    fn setApprovalForAll(ref self: TContractState, operator: ContractAddress, approved: bool);
+    fn getApproved(self: @TContractState, tokenId: u256) -> ContractAddress;
+    fn isApprovedForAll(
+        self: @TContractState, owner: ContractAddress, operator: ContractAddress
+    ) -> bool;
+
+    // IERC721MetadataCamelOnly
+    fn tokenURI(self: @TContractState, tokenId: u256) -> ByteArray;
 }
 
 // NFTWrapper contract interface
