@@ -1,4 +1,19 @@
-const { Account, constants, ec, json, stark, Provider, hash, CallData, shortString, RpcProvider, typedData, Contract, uint256, encode } = require('starknet');
+const { 
+  Account, 
+  constants, 
+  ec, 
+  json, 
+  stark, 
+  Provider, 
+  hash, 
+  CallData, 
+  shortString, 
+  RpcProvider, 
+  typedData, 
+  Contract, 
+  uint256, 
+  encode 
+} = require('starknet');
 require('dotenv').config()
 
 const main = async ({ token_id }) => {
@@ -34,12 +49,13 @@ const main = async ({ token_id }) => {
   
   const provider = new RpcProvider({ nodeUrl: process.env.SEPOLIA_NODE_URL });
   const account = new Account(provider, process.env.ADDRESS, process.env.PRIVATE_KEY);
-  console.log('public key:', ec.starkCurve.getStarkKey(process.env.PRIVATE_KEY));
+  console.log('Public key:', ec.starkCurve.getStarkKey(process.env.PRIVATE_KEY));
+  console.log('Start signing the message...');
   const signature = (await account.signMessage(typedDataValidate));
   console.log('Sinature:', signature);
 
   const messageHash = typedData.getMessageHash(typedDataValidate, process.env.ADDRESS);
-  console.log('Message Hash:', messageHash);    //0x11357f6641ca52050112c85804ea8f59a98be12c5296af634ad4fef0d9af0f1
+  console.log('Message Hash:', messageHash);
 
   const addressAbi = (await provider.getClassAt(process.env.ADDRESS)).abi;
   const addressContract = new Contract(addressAbi, process.env.ADDRESS, provider);
